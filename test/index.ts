@@ -1,4 +1,4 @@
-import { ParseQuery, GetDefinition } from "../";
+import { ParseQuery, GetDefinition } from "../src";
 
 type definitions = {
   workspaces: {
