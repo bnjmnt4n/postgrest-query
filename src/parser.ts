@@ -13,13 +13,19 @@ import { ParserError, GenericStringError, EatWhitespace } from "./utilities";
  */
 type ReadLetters<Input extends string> = string extends Input
   ? GenericStringError
+  : ReadLettersHelper<Input, ""> extends [`${infer Letters}`, `${infer Remainder}`]
+  ? Letters extends ""
+    ? ParserError<`Expected letter at \`${Input}\``>
+    : [Letters, Remainder]
+  : ReadLettersHelper<Input, "">;
+
+type ReadLettersHelper<Input extends string, Acc extends string> = string extends Input
+  ? GenericStringError
   : Input extends `${infer L}${infer Remainder}`
   ? L extends Letter
-    ? ReadLetters<Remainder> extends [`${infer Left}`, infer Remainder]
-      ? [`${L}${Left}`, Remainder]
-      : [L, Remainder]
-    : ParserError<`Expected letter at \`${L}${Remainder}\``>
-  : ParserError<`Unable to perform type inference with input \`${Input}\``>;
+    ? ReadLettersHelper<Remainder, `${Acc}${L}`>
+    : [Acc, Input]
+  : [Acc, ""];
 
 /**
  * Parses an identifier.
@@ -41,7 +47,7 @@ type ParseIdentifier<Input extends string> = ReadLetters<Input>;
  *
  * TODO: casting operators `::text`, JSON operators `->`, `->>`.
  */
-type ParseNode<Input extends string> = Input extends ""
+export type ParseNode<Input extends string> = Input extends ""
   ? ParserError<"Empty string">
   : // `*`
   Input extends `*${infer Remainder}`
@@ -111,14 +117,17 @@ type ParseEmbeddedResource<Input extends string> = Input extends `(${infer Remai
  *
  * Returns a tuple of ["Parsed fields", "Remainder of text"] or an error.
  */
-type ParseNodes<Input extends string> = string extends Input
+export type ParseNodes<Input extends string> = string extends Input
   ? GenericStringError
-  : ParseNode<Input> extends [infer Field, `${infer Remainder}`]
+  : ParseNodesHelper<Input, []>;
+
+type ParseNodesHelper<Input extends string, Fields extends unknown[]> = ParseNode<Input> extends [
+  infer Field,
+  `${infer Remainder}`
+]
   ? EatWhitespace<Remainder> extends `,${infer Remainder}`
-    ? ParseNodes<EatWhitespace<Remainder>> extends [[...infer Fields], `${infer Remainder}`]
-      ? [[Field, ...Fields], EatWhitespace<Remainder>]
-      : ParseNodes<EatWhitespace<Remainder>>
-    : [[Field], EatWhitespace<Remainder>]
+    ? ParseNodesHelper<EatWhitespace<Remainder>, [Field, ...Fields]>
+    : [[Field, ...Fields], EatWhitespace<Remainder>]
   : ParseNode<Input>;
 
 /**

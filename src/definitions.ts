@@ -10,12 +10,13 @@ import { ParsedNode } from "./utilities";
 export type GetDefinition<
   Definitions extends Record<string, Record<string, any>>,
   Name extends string,
-  Fields extends unknown[] = []
+  Fields extends unknown[] = [],
+  Acc extends unknown = unknown
 > = Fields extends [infer R]
-  ? ConstructFieldDefinition<Definitions, Name, R>
+  ? GetDefinition<Definitions, Name, [], ConstructFieldDefinition<Definitions, Name, R> & Acc>
   : Fields extends [infer R, ...infer Rest]
-  ? ConstructFieldDefinition<Definitions, Name, R> & GetDefinition<Definitions, Name, Rest>
-  : Record<string, unknown>;
+  ? GetDefinition<Definitions, Name, Rest, ConstructFieldDefinition<Definitions, Name, R> & Acc>
+  : Acc;
 
 /**
  * Constructs a type definition for a single field of an object.

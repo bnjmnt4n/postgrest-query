@@ -15,7 +15,16 @@ type definitions = {
   };
 };
 
-const WorkspacesQuery = `*,team:members(user:users(id,email))`;
+const WorkspacesQuery = `
+  *,
+  team:members(
+    workspaceId:workspace_id,
+    user:users(
+      id,
+      email
+    )
+  )
+`;
 
 type ParsedWorkspacesQuery = ParseQuery<typeof WorkspacesQuery>;
 
