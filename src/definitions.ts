@@ -18,6 +18,8 @@ export type GetDefinition<
   ? GetDefinition<Definitions, Name, Rest, ConstructFieldDefinition<Definitions, Name, R> & Acc>
   : Acc;
 
+type OneOrMore<T> = T | T[];
+
 /**
  * Constructs a type definition for a single field of an object.
  *
@@ -32,7 +34,11 @@ type ConstructFieldDefinition<
 > = Field extends { star: true }
   ? Definitions[Name]
   : Field extends { name: string; original: string; children: ParsedNode[] }
-  ? { [k in Field["name"]]: GetDefinition<Definitions, Field["original"], Field["children"]> }
+  ? {
+      [k in Field["name"]]: OneOrMore<
+        GetDefinition<Definitions, Field["original"], Field["children"]>
+      >;
+    }
   : Field extends { name: string; original: string }
   ? { [k in Field["name"]]: Definitions[Name][Field["original"]] }
   : Record<string, unknown>;
