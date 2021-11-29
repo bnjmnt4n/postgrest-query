@@ -1,6 +1,6 @@
 {
   "name": "postgrest-query",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "TypeScript-based parser for PostgREST queries.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
