@@ -11,7 +11,7 @@ export type GetDefinition<
   Definitions extends Record<string, Record<string, any>>,
   Name extends string,
   Fields extends unknown[] = [],
-  Acc extends unknown = unknown
+  Acc = unknown
 > = Fields extends [infer R]
   ? GetDefinition<Definitions, Name, [], ConstructFieldDefinition<Definitions, Name, R> & Acc>
   : Fields extends [infer R, ...infer Rest]
@@ -28,7 +28,7 @@ export type GetDefinition<
 type ConstructFieldDefinition<
   Definitions extends Record<string, Record<string, any>>,
   Name extends string,
-  Field extends unknown
+  Field
 > = Field extends { star: true }
   ? Definitions[Name]
   : Field extends { name: string; original: string; children: ParsedNode[] }

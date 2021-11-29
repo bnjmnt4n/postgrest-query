@@ -28,4 +28,5 @@ const WorkspacesQuery = `
 
 type ParsedWorkspacesQuery = ParseQuery<typeof WorkspacesQuery>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ParsedWorkspacesDefinition = GetDefinition<definitions, "workspaces", ParsedWorkspacesQuery>;
