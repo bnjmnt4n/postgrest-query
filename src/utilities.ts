@@ -22,3 +22,17 @@ export type EatWhitespace<Input extends string> = string extends Input
   : Input extends `${Whitespace}${infer Remainder}`
   ? EatWhitespace<Remainder>
   : Input;
+
+/**
+ * Permits a single value of a given type, or multiple values of the type.
+ * Marked with a property to uniquely identify types matching this utility.
+ *
+ * @param T The type for which a single value, or multiple values in an array is permitted.
+ */
+export type OneOrMore<T> = (T | T[]) & {
+  /**
+   * Unique brand to identify this type.
+   * Should not be used externally.
+   */
+  __postgrestQueryBrand: boolean; // TODO: look into use of `unique symbol`
+};

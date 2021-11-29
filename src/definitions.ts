@@ -1,4 +1,4 @@
-import { ParsedNode } from "./utilities";
+import { OneOrMore, ParsedNode } from "./utilities";
 
 /**
  * Constructs a type definition for an object based on a given PostgREST query.
@@ -17,8 +17,6 @@ export type GetDefinition<
   : Fields extends [infer R, ...infer Rest]
   ? GetDefinition<Definitions, Name, Rest, ConstructFieldDefinition<Definitions, Name, R> & Acc>
   : Acc;
-
-type OneOrMore<T> = T | T[];
 
 /**
  * Constructs a type definition for a single field of an object.
